@@ -4,7 +4,7 @@ import { getFirestore, doc, onSnapshot, setDoc } from "firebase/firestore";
 import {
   Menu, X, Plus, ChevronRight, ChevronDown, Sparkles, CalendarDays,
   CheckSquare, ShoppingCart, MapPin, ArrowLeft, Archive, ArchiveRestore,
-  Users, Package, Ticket, ExternalLink, Check, Calendar
+  Users, Package, Ticket, ExternalLink, Check, Calendar, Pencil
 } from "lucide-react";
 
 /* ---------------------------------------------------------
@@ -13,12 +13,12 @@ import {
    そのまま貼り付けてください(下の6行を、あなたの値に置き換えます)。
 --------------------------------------------------------- */
 const firebaseConfig = {
-  apiKey: "AIzaSyBANVa0m0KS0ELeWEnGGnLx6t-fTz-gVrQ",
-  authDomain: "travel-plans-6f3a6.firebaseapp.com",
-  projectId: "travel-plans-6f3a6",
-  storageBucket: "travel-plans-6f3a6.firebasestorage.app",
-  messagingSenderId: "557134790077",
-  appId: "1:557134790077:web:528262dfae0e42d98226d4"
+ apiKey: "AIzaSyD4U00sweCYhpQzq3ltY2CEzdvbWgpvUN0",
+  authDomain: "travel-plans-3bbd1.firebaseapp.com",
+  projectId: "travel-plans-3bbd1",
+  storageBucket: "travel-plans-3bbd1.firebasestorage.app",
+  messagingSenderId: "690113817673",
+  appId: "1:690113817673:web:3acc3894734e219ef6a398"
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
@@ -28,20 +28,21 @@ const db = getFirestore(firebaseApp);
    定数
 --------------------------------------------------------- */
 const CATEGORY_META = {
-  "飛行機": { emoji: "✈️", bg: "#FFE3DC", text: "#C25B3E", dot: "#FFB4A2" },
-  "電車": { emoji: "🚅", bg: "#FFEAE3", text: "#C97452", dot: "#FFC3AE" },
-  "バス": { emoji: "🚌", bg: "#FFEFE9", text: "#D18563", dot: "#FFD2BE" },
-  "タクシー": { emoji: "🚕", bg: "#FFF2EE", text: "#D89473", dot: "#FFDDCB" },
-  "宿泊": { emoji: "🏨", bg: "#EDE6F9", text: "#6A4FA0", dot: "#B8A6E0" },
-  "食事": { emoji: "🍽️", bg: "#FFF3D6", text: "#B8862E", dot: "#FFD97D" },
-  "カフェ": { emoji: "☕️", bg: "#F5E9D6", text: "#8C6A3E", dot: "#D9BB8C" },
-  "飲み会": { emoji: "🍻", bg: "#FFE9B8", text: "#A67C22", dot: "#FFCB61" },
-  "観光": { emoji: "🎪", bg: "#E1F5EC", text: "#3F8F6C", dot: "#7FC8A9" },
-  "その他": { emoji: "🩵", bg: "#E6F4FB", text: "#2E7AA6", dot: "#9FD7EE" },
+  "비행기": { emoji: "✈️", bg: "#FFE3DC", text: "#C25B3E", dot: "#FFB4A2" },
+  "기차": { emoji: "🚅", bg: "#FFEAE3", text: "#C97452", dot: "#FFC3AE" },
+  "일반열차": { emoji: "🚃", bg: "#FFEDE6", text: "#B8875E", dot: "#FFCFAE" },
+  "버스": { emoji: "🚌", bg: "#FFEFE9", text: "#D18563", dot: "#FFD2BE" },
+  "택시": { emoji: "🚕", bg: "#FFF2EE", text: "#D89473", dot: "#FFDDCB" },
+  "숙박": { emoji: "🏨", bg: "#EDE6F9", text: "#6A4FA0", dot: "#B8A6E0" },
+  "식사": { emoji: "🍽️", bg: "#FFF3D6", text: "#B8862E", dot: "#FFD97D" },
+  "카페": { emoji: "☕️", bg: "#F5E9D6", text: "#8C6A3E", dot: "#D9BB8C" },
+  "술자리": { emoji: "🍻", bg: "#FFE9B8", text: "#A67C22", dot: "#FFCB61" },
+  "관광": { emoji: "🎪", bg: "#E1F5EC", text: "#3F8F6C", dot: "#7FC8A9" },
+  "기타": { emoji: "🩵", bg: "#E6F4FB", text: "#2E7AA6", dot: "#9FD7EE" },
 };
-const CATEGORY_LIST = ["飛行機", "電車", "バス", "タクシー", "宿泊", "食事", "カフェ", "飲み会", "観光", "その他"];
-const EMOJI_OPTIONS = ["✈️", "🏖️", "⛰️", "🗼", "🚗", "🚄", "🏯", "🎡", "🍜", "🏕️", "🛳️", "🌸"];
-const RESERVATION_CATEGORIES = ["フライト", "ホテル", "レンタカー", "その他"];
+const CATEGORY_LIST = ["비행기", "기차", "일반열차", "버스", "택시", "숙박", "식사", "카페", "술자리", "관광", "기타"];
+const FLAG_OPTIONS = ["🇯🇵", "🇰🇷", "🇺🇸", "🇬🇧", "🇫🇷", "🇮🇹", "🇪🇸", "🇩🇪", "🇦🇺", "🇨🇦", "🇹🇭", "🇻🇳", "🇨🇳", "🇹🇼", "🇸🇬", "🇭🇰", "🇮🇩", "🇵🇭", "🇮🇳", "🇵🇹"];
+const RESERVATION_CATEGORIES = ["Flight", "Train", "Bus", "Hotel", "Activity", "Other"];
 
 /* ---------------------------------------------------------
    日付ユーティリティ
@@ -104,13 +105,13 @@ function SelectField(props) {
 
 function CheckCircle({ checked, onClick }) {
   return (
-    <button className={"ts-checkcircle" + (checked ? " checked" : "")} onClick={onClick} aria-label="チェック">
+    <button className={"ts-checkcircle" + (checked ? " checked" : "")} onClick={onClick} aria-label="체크">
       {checked && <Check size={14} strokeWidth={3} color="#fff" />}
     </button>
   );
 }
 
-function ChecklistTab({ items, onAdd, onToggle, onDelete, placeholder }) {
+function ChecklistTab({ items, onAdd, onToggle, onDelete, placeholder, deleteLabel = "삭제" }) {
   const [text, setText] = useState("");
   const submit = () => {
     if (!text.trim()) return;
@@ -126,15 +127,15 @@ function ChecklistTab({ items, onAdd, onToggle, onDelete, placeholder }) {
           placeholder={placeholder}
           onKeyDown={(e) => e.key === "Enter" && submit()}
         />
-        <button className="ts-small-add-btn" onClick={submit}><Plus size={16} /> 追加</button>
+        <button className="ts-small-add-btn" onClick={submit}><Plus size={16} /></button>
       </div>
       <div className="ts-checklist-items">
-        {items.length === 0 && <p className="ts-empty-text">まだ何も登録されていません</p>}
+        {items.length === 0 && <p className="ts-empty-text">아직 아무것도 등록되지 않았습니다.</p>}
         {items.map((it) => (
           <div className="ts-checklist-row" key={it.id}>
             <CheckCircle checked={it.checked} onClick={() => onToggle(it.id)} />
             <span className={it.checked ? "ts-checked-text" : ""}>{it.text}</span>
-            <button className="ts-delete-link" onClick={() => onDelete(it.id)}>削除する</button>
+            <button className="ts-delete-link" onClick={() => onDelete(it.id)}>{deleteLabel}</button>
           </div>
         ))}
       </div>
@@ -149,9 +150,9 @@ function CountdownCard({ trip, onOpen }) {
   const diff = diffDaysFromToday(trip.startDate);
   const endDiff = diffDaysFromToday(trip.endDate);
   let label;
-  if (diff > 0) label = `あと${diff}日`;
-  else if (diff === 0) label = "今日から出発!";
-  else if (endDiff >= 0) label = "旅行中!";
+  if (diff > 0) label = `𝔻-${diff}`;
+  else if (diff === 0) label = "오늘 출발!";
+  else if (endDiff >= 0) label = "여행 중!";
   else label = "";
 
   return (
@@ -162,7 +163,7 @@ function CountdownCard({ trip, onOpen }) {
       <div className="ts-countdown-name">{trip.name}</div>
       <div className="ts-countdown-dest"><MapPin size={12} /> {trip.destination}</div>
       <div className="ts-countdown-range">{formatRange(trip.startDate, trip.endDate)}</div>
-      <button className="ts-open-btn" onClick={onOpen}>このしおりを開く</button>
+      <button className="ts-open-btn" onClick={onOpen}>𝕆ℙ𝔼ℕ</button>
     </div>
   );
 }
@@ -170,16 +171,16 @@ function CountdownCard({ trip, onOpen }) {
 function HomeEmpty({ onAddTrip }) {
   return (
     <div className="ts-home-empty">
-      <Sparkles size={34} color="#3FA9E0" />
-      <div className="ts-home-empty-title">次の旅行を計画しよう</div>
-      <p className="ts-home-empty-sub">まだ予定中の旅行がありません</p>
-      <button className="ts-primary-btn" onClick={onAddTrip}>旅行を追加する</button>
+      <div className="ts-home-empty-icon"><Sparkles size={34} color="#3FA9E0" /></div>
+      <div className="ts-home-empty-title">행복한 여행 시작𓐃✈︎⸝⋆</div>
+      <p className="ts-home-empty-sub">아직 계획이 없습니다.</p>
+      <button className="ts-primary-btn" onClick={onAddTrip}>여행 추가</button>
     </div>
   );
 }
 
 function ScheduleMiniCard({ item }) {
-  const meta = CATEGORY_META[item.category] || CATEGORY_META["その他"];
+  const meta = CATEGORY_META[item.category] || CATEGORY_META["기타"];
   return (
     <div className="ts-mini-schedule-card" onClick={() => openMap(item.location || item.arrivalLocation)}>
       <span className="ts-cat-badge ts-cat-badge-emoji ts-cat-badge-emoji-sm" style={{ background: meta.bg }}>{meta.emoji}</span>
@@ -195,7 +196,8 @@ function ScheduleMiniCard({ item }) {
   );
 }
 
-function HomeScreen({ trips, onOpenTrip, onOpenDrawer, onAddTrip }) {
+function HomeScreen({ trips, onOpenTrip, onOpenDrawer, onAddTrip, onDeleteTrip }) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const upcoming = useMemo(() => {
     return trips
       .filter((t) => !t.archived && t.endDate >= todayYMD())
@@ -203,8 +205,6 @@ function HomeScreen({ trips, onOpenTrip, onOpenDrawer, onAddTrip }) {
   }, [trips]);
 
   const isDuring = upcoming && todayYMD() >= upcoming.startDate && todayYMD() <= upcoming.endDate;
-  const scheduleDay = upcoming ? (isDuring ? todayYMD() : upcoming.startDate) : null;
-  const scheduleItems = upcoming ? (upcoming.days[scheduleDay] || []) : [];
 
   let phase = "pre";
   if (upcoming) {
@@ -212,13 +212,14 @@ function HomeScreen({ trips, onOpenTrip, onOpenDrawer, onAddTrip }) {
     else if (todayYMD() > upcoming.endDate) phase = "post";
   }
   const todoItems = upcoming ? upcoming.todos[phase].filter((t) => !t.checked) : [];
-  const shoppingItems = upcoming ? upcoming.shoppingList.filter((s) => !s.checked) : [];
+  const shopPhase = phase === "pre" ? "pre" : "during";
+  const shoppingItems = upcoming ? upcoming.shoppingList[shopPhase].filter((s) => !s.checked) : [];
 
   return (
     <div className="ts-screen">
       <div className="ts-topbar">
         <button className="ts-icon-btn" onClick={onOpenDrawer}><Menu size={22} color="#33566E" /></button>
-        <div className="ts-topbar-title">🌴 旅のしおり</div>
+        <div className="ts-topbar-title">⋆｡☁︎︎𝕋𝕣𝕒𝕧𝕖𝕝 ℙ𝕝𝕒𝕟𝕤︎┈┈✈︎☁︎︎⋆｡</div>
         <div style={{ width: 22 }} />
       </div>
 
@@ -227,26 +228,31 @@ function HomeScreen({ trips, onOpenTrip, onOpenDrawer, onAddTrip }) {
 
         {upcoming && (
           <>
-            <div className="ts-section-head"><CalendarDays size={17} color="#FFB6B9" /><span>{isDuring ? "今日の予定" : "初日の予定"}</span></div>
-            {scheduleItems.length === 0 ? (
-              <div className="ts-empty-block"><Calendar size={26} color="#BFC9D2" /><p>予定はまだありません</p></div>
-            ) : (
-              <div className="ts-mini-list">{scheduleItems.map((it) => <ScheduleMiniCard key={it.id} item={it} />)}</div>
-            )}
-
-            <div className="ts-section-head"><CheckSquare size={17} color="#FFB6B9" /><span>やることリスト({phase === "pre" ? "旅行前" : phase === "during" ? "旅行中" : "旅行後"})</span></div>
+            <div className="ts-section-head"><CheckSquare size={17} color="#FFB6B9" /><span>𝕋𝕠 𝔻𝕠</span></div>
             {todoItems.length === 0 ? (
-              <p className="ts-empty-text">未完了のタスクはありません</p>
+              <p className="ts-empty-text">미완료 태스크가 없습니다.</p>
             ) : (
               <div className="ts-simple-list">{todoItems.map((t) => <div key={t.id} className="ts-simple-row"><span className="ts-cat-dot" style={{ background: "#FFD5D7" }} />{t.text}</div>)}</div>
             )}
 
-            <div className="ts-section-head"><ShoppingCart size={17} color="#FFB6B9" /><span>買うものリスト</span></div>
+            <div className="ts-section-head"><ShoppingCart size={17} color="#FFB6B9" /><span>𝕋𝕠 𝔹𝕦𝕪</span></div>
             {shoppingItems.length === 0 ? (
-              <p className="ts-empty-text">買い忘れはなさそうです</p>
+              <p className="ts-empty-text">구입이 필요한 물건은 없습니다.</p>
             ) : (
               <div className="ts-simple-list">{shoppingItems.map((s) => <div key={s.id} className="ts-simple-row"><span className="ts-cat-dot" style={{ background: "#FFD5D7" }} />{s.text}</div>)}</div>
             )}
+
+            <div className="ts-delete-trip-block">
+              {!confirmDelete ? (
+                <button className="ts-delete-link" onClick={() => setConfirmDelete(true)}>이 여행을 삭제</button>
+              ) : (
+                <div className="ts-delete-confirm">
+                  <p>정말로 삭제하시겠습니까?</p>
+                  <button className="ts-delete-link" onClick={() => onDeleteTrip(upcoming.id)}>삭제</button>
+                  <button className="ts-cancel-link" onClick={() => setConfirmDelete(false)}>취소</button>
+                </div>
+              )}
+            </div>
           </>
         )}
       </div>
@@ -258,7 +264,7 @@ function HomeScreen({ trips, onOpenTrip, onOpenDrawer, onAddTrip }) {
    旅行追加フォーム(下からせり上がるパネル)
 --------------------------------------------------------- */
 function AddTripSheet({ onClose, onCreate }) {
-  const [emoji, setEmoji] = useState(EMOJI_OPTIONS[0]);
+  const [emoji, setEmoji] = useState(FLAG_OPTIONS[0]);
   const [name, setName] = useState("");
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -282,7 +288,7 @@ function AddTripSheet({ onClose, onCreate }) {
       emoji, name, destination, startDate, endDate, members,
       archived: false,
       days: Object.fromEntries(days.map((d) => [d, []])),
-      packingList: [], shoppingList: [],
+      packingList: [], shoppingList: { pre: [], during: [] },
       todos: { pre: [], during: [], post: [] },
       reservations: [],
     });
@@ -292,16 +298,14 @@ function AddTripSheet({ onClose, onCreate }) {
     <div className="ts-sheet-overlay" onClick={onClose}>
       <div className="ts-sheet" onClick={(e) => e.stopPropagation()}>
         <div className="ts-sheet-handle" />
-        <h3 className="ts-sheet-title">旅行を追加</h3>
+        <h3 className="ts-sheet-title">여행 추가</h3>
 
-        <div className="ts-emoji-picker">
-          {EMOJI_OPTIONS.map((em) => (
-            <button key={em} className={"ts-emoji-btn" + (emoji === em ? " selected" : "")} onClick={() => setEmoji(em)}>{em}</button>
-          ))}
-        </div>
+        <SelectField value={emoji} onChange={(e) => setEmoji(e.target.value)} className="ts-flag-select">
+          {FLAG_OPTIONS.map((em) => <option key={em} value={em}>{em}</option>)}
+        </SelectField>
 
-        <InputField placeholder="旅行名(例:東京家族旅行)" value={name} onChange={(e) => setName(e.target.value)} />
-        <InputField placeholder="行き先(例:東京)" value={destination} onChange={(e) => setDestination(e.target.value)} />
+        <InputField placeholder="제목" value={name} onChange={(e) => setName(e.target.value)} />
+        <InputField placeholder="목적지" value={destination} onChange={(e) => setDestination(e.target.value)} />
 
         <div className="ts-grid-2">
           <InputField type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
@@ -309,8 +313,8 @@ function AddTripSheet({ onClose, onCreate }) {
         </div>
 
         <div className="ts-add-row">
-          <InputField placeholder="参加メンバーの名前" value={memberInput} onChange={(e) => setMemberInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addMember()} />
-          <button className="ts-small-add-btn" onClick={addMember}><Plus size={16} /> 追加</button>
+          <InputField placeholder="참가멘버" value={memberInput} onChange={(e) => setMemberInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addMember()} />
+          <button className="ts-small-add-btn" onClick={addMember}><Plus size={16} /></button>
         </div>
         <div className="ts-chip-row">
           {members.map((m, i) => (
@@ -319,7 +323,7 @@ function AddTripSheet({ onClose, onCreate }) {
         </div>
 
         <button className="ts-primary-btn" style={{ opacity: canSubmit ? 1 : 0.4, pointerEvents: canSubmit ? "auto" : "none" }} onClick={submit}>
-          この内容で作成
+          작성
         </button>
       </div>
     </div>
@@ -358,22 +362,22 @@ function TripDrawer({ trips, onClose, onOpen, onToggleArchive, onAddTrip, showAd
     <div className="ts-drawer-overlay" onClick={onClose}>
       <div className="ts-drawer" onClick={(e) => e.stopPropagation()}>
         <div className="ts-drawer-top">
-          <h3>旅行一覧</h3>
+          <h3>𝕋𝕣𝕒𝕧𝕖𝕝 𝕃𝕚𝕤𝕥</h3>
           <button className="ts-icon-btn" onClick={onClose}><X size={20} /></button>
         </div>
 
-        <button className="ts-primary-btn" onClick={() => setShowAddSheet(true)}><Plus size={16} /> 旅行を追加</button>
+        <button className="ts-primary-btn" onClick={() => setShowAddSheet(true)}><Plus size={16} /></button>
 
-        <h4 className="ts-drawer-subhead">予定中</h4>
-        {upcoming.length === 0 && <p className="ts-empty-text">予定中の旅行はありません</p>}
+        <h4 className="ts-drawer-subhead">ℙ𝕝𝕒𝕟𝕟𝕚𝕟𝕘</h4>
+        {upcoming.length === 0 && <p className="ts-empty-text">계획 중인 여행은 없습니다.</p>}
         {upcoming.map((t) => <TripListItem key={t.id} trip={t} onOpen={onOpen} onToggleArchive={onToggleArchive} />)}
 
-        <h4 className="ts-drawer-subhead">終わった旅行</h4>
-        {ended.length === 0 && <p className="ts-empty-text">終わった旅行はありません</p>}
+        <h4 className="ts-drawer-subhead">𝔽𝕚𝕟𝕚𝕤𝕙𝕖𝕕</h4>
+        {ended.length === 0 && <p className="ts-empty-text">끝난 여행은 없습니다.</p>}
         {ended.map((t) => <TripListItem key={t.id} trip={t} onOpen={onOpen} onToggleArchive={onToggleArchive} />)}
 
         <button className="ts-archive-toggle" onClick={() => setArchiveOpen(!archiveOpen)}>
-          {archiveOpen ? "アーカイブ済みを隠す" : `アーカイブ済みを見る(${archived.length})`}
+          Archive ({archived.length})
         </button>
         {archiveOpen && archived.map((t) => <TripListItem key={t.id} trip={t} onOpen={onOpen} onToggleArchive={onToggleArchive} />)}
       </div>
@@ -386,59 +390,63 @@ function TripDrawer({ trips, onClose, onOpen, onToggleArchive, onAddTrip, showAd
 /* ---------------------------------------------------------
    予定追加フォーム(日程タブ内)
 --------------------------------------------------------- */
-function AddScheduleForm({ onAdd, onCancel }) {
-  const [time, setTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("観光");
-  const [location, setLocation] = useState("");
-  const [arrivalLocation, setArrivalLocation] = useState("");
-  const [arrivalIsLocalTime, setArrivalIsLocalTime] = useState(false);
-  const [memo, setMemo] = useState("");
-  const [reservationNumber, setReservationNumber] = useState("");
+function AddScheduleForm({ onSave, onCancel, initialItem }) {
+  const [time, setTime] = useState(initialItem?.time || "");
+  const [endTime, setEndTime] = useState(initialItem?.endTime || "");
+  const [title, setTitle] = useState(initialItem?.title || "");
+  const [category, setCategory] = useState(initialItem?.category || "관광");
+  const [location, setLocation] = useState(initialItem?.location || "");
+  const [arrivalLocation, setArrivalLocation] = useState(initialItem?.arrivalLocation || "");
+  const [arrivalIsLocalTime, setArrivalIsLocalTime] = useState(initialItem?.arrivalIsLocalTime || false);
+  const [memo, setMemo] = useState(initialItem?.memo || "");
+  const [reservationNumber, setReservationNumber] = useState(initialItem?.reservationNumber || "");
 
   const canSubmit = time && title;
+  const isEditing = !!initialItem;
 
   return (
     <div className="ts-inline-form">
       <div className="ts-grid-2">
         <InputField type="time" value={time} onChange={(e) => setTime(e.target.value)} />
-        <InputField type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} placeholder="到着時刻(任意)" />
+        <InputField type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} placeholder="도착 시간(선택)" />
       </div>
-      <InputField placeholder="予定名" value={title} onChange={(e) => setTitle(e.target.value)} />
+      <InputField placeholder="일정 이름" value={title} onChange={(e) => setTitle(e.target.value)} />
       <SelectField value={category} onChange={(e) => setCategory(e.target.value)}>
         {CATEGORY_LIST.map((c) => <option key={c} value={c}>{CATEGORY_META[c].emoji}</option>)}
       </SelectField>
       <div className="ts-grid-2">
-        <InputField placeholder="出発場所(任意)" value={location} onChange={(e) => setLocation(e.target.value)} />
-        <InputField placeholder="到着場所(任意)" value={arrivalLocation} onChange={(e) => setArrivalLocation(e.target.value)} />
+        <InputField placeholder="출발 장소(선택)" value={location} onChange={(e) => setLocation(e.target.value)} />
+        <InputField placeholder="도착 장소(선택)" value={arrivalLocation} onChange={(e) => setArrivalLocation(e.target.value)} />
       </div>
       <label className="ts-checkbox-label">
-        <input type="checkbox" checked={arrivalIsLocalTime} onChange={(e) => setArrivalIsLocalTime(e.target.checked)} /> 到着時刻は現地時間
+        <input type="checkbox" checked={arrivalIsLocalTime} onChange={(e) => setArrivalIsLocalTime(e.target.checked)} /> 도착 시간은 현지 시간
       </label>
-      <InputField placeholder="予約番号(任意)" value={reservationNumber} onChange={(e) => setReservationNumber(e.target.value)} />
-      <TextareaField placeholder="メモ(任意)" rows={2} value={memo} onChange={(e) => setMemo(e.target.value)} />
+      <InputField placeholder="예약 번호(선택)" value={reservationNumber} onChange={(e) => setReservationNumber(e.target.value)} />
+      <TextareaField placeholder="메모(선택)" rows={2} value={memo} onChange={(e) => setMemo(e.target.value)} />
       <div className="ts-form-btn-row">
-        <button className="ts-cancel-link" onClick={onCancel}>キャンセル</button>
+        <button className="ts-cancel-link" onClick={onCancel}>취소</button>
         <button
           className="ts-primary-btn"
           style={{ opacity: canSubmit ? 1 : 0.4, pointerEvents: canSubmit ? "auto" : "none" }}
-          onClick={() => canSubmit && onAdd({ id: uid(), time, endTime, title, category, location, arrivalLocation, arrivalIsLocalTime, memo, reservationNumber })}
+          onClick={() => canSubmit && onSave({
+            id: initialItem?.id || uid(),
+            time, endTime, title, category, location, arrivalLocation, arrivalIsLocalTime, memo, reservationNumber,
+          })}
         >
-          この予定を追加
+          {isEditing ? "이 일정을 저장" : "이 일정을 추가"}
         </button>
       </div>
     </div>
   );
 }
 
-function ScheduleCard({ item, onDelete }) {
-  const meta = CATEGORY_META[item.category] || CATEGORY_META["その他"];
+function ScheduleCard({ item, onDelete, onEdit }) {
+  const meta = CATEGORY_META[item.category] || CATEGORY_META["기타"];
   return (
     <div className="ts-schedule-card">
       <div className="ts-schedule-time-col">
         <div className="ts-schedule-time">{item.time}</div>
-        {item.endTime && <div className="ts-schedule-endtime">↓ {item.endTime}{item.arrivalIsLocalTime ? "(現地)" : ""}</div>}
+        {item.endTime && <div className="ts-schedule-endtime">↓ {item.endTime}{item.arrivalIsLocalTime ? "(현지)" : ""}</div>}
       </div>
       <div className="ts-schedule-body">
         <div className="ts-schedule-top-row">
@@ -447,47 +455,62 @@ function ScheduleCard({ item, onDelete }) {
         </div>
         {(item.location || item.arrivalLocation) && (
           <div className="ts-schedule-route">
-            {item.location && <span className="ts-route-link" onClick={() => openMap(item.location)}>{item.location} <ExternalLink size={11} /></span>}
+            {item.location && <span className="ts-route-link" onClick={(e) => { e.stopPropagation(); openMap(item.location); }}>{item.location} <ExternalLink size={11} /></span>}
             {item.location && item.arrivalLocation && <span> → </span>}
-            {item.arrivalLocation && <span className="ts-route-link" onClick={() => openMap(item.arrivalLocation)}>{item.arrivalLocation} <ExternalLink size={11} /></span>}
+            {item.arrivalLocation && <span className="ts-route-link" onClick={(e) => { e.stopPropagation(); openMap(item.arrivalLocation); }}>{item.arrivalLocation} <ExternalLink size={11} /></span>}
           </div>
         )}
         {item.reservationNumber && <div className="ts-schedule-reservation"><Ticket size={12} /> {item.reservationNumber}</div>}
         {item.memo && <div className="ts-schedule-memo">{item.memo}</div>}
       </div>
+      <button className="ts-edit-btn" onClick={onEdit}><Pencil size={13} /></button>
       <button className="ts-x-btn" onClick={onDelete}>×</button>
     </div>
   );
 }
 
-function ScheduleTab({ trip, onAddItem, onDeleteItem }) {
+function ScheduleTab({ trip, onAddItem, onUpdateItem, onDeleteItem }) {
   const dayList = listDaysInRange(trip.startDate, trip.endDate);
   const [selectedDay, setSelectedDay] = useState(dayList[0]);
   const [showForm, setShowForm] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
   const items = (trip.days[selectedDay] || []).slice().sort((a, b) => (a.time < b.time ? -1 : 1));
+
+  const closeForms = () => { setShowForm(false); setEditingItem(null); };
 
   return (
     <div>
       <div className="ts-day-tabs">
         {dayList.map((d, i) => (
-          <button key={d} className={"ts-day-tab" + (d === selectedDay ? " selected" : "")} onClick={() => { setSelectedDay(d); setShowForm(false); }}>
+          <button key={d} className={"ts-day-tab" + (d === selectedDay ? " selected" : "")} onClick={() => { setSelectedDay(d); closeForms(); }}>
             Day{i + 1}
           </button>
         ))}
       </div>
 
-      {items.length === 0 && !showForm && (
-        <div className="ts-empty-block"><Calendar size={26} color="#BFC9D2" /><p>この日の予定はまだありません</p></div>
+      {items.length === 0 && !showForm && !editingItem && (
+        <div className="ts-empty-block"><Calendar size={26} color="#BFC9D2" /><p>아직 예정이 없습니다. </p></div>
       )}
 
       <div className="ts-schedule-list">
-        {items.map((item) => <ScheduleCard key={item.id} item={item} onDelete={() => onDeleteItem(selectedDay, item.id)} />)}
+        {items.map((item) => (
+          editingItem?.id === item.id ? (
+            <AddScheduleForm
+              key={item.id}
+              initialItem={editingItem}
+              onCancel={closeForms}
+              onSave={(updated) => { onUpdateItem(selectedDay, item.id, updated); closeForms(); }}
+            />
+          ) : (
+            <ScheduleCard key={item.id} item={item} onDelete={() => onDeleteItem(selectedDay, item.id)} onEdit={() => { setShowForm(false); setEditingItem(item); }} />
+          )
+        ))}
       </div>
 
       {showForm ? (
-        <AddScheduleForm onCancel={() => setShowForm(false)} onAdd={(item) => { onAddItem(selectedDay, item); setShowForm(false); }} />
+        <AddScheduleForm onCancel={closeForms} onSave={(item) => { onAddItem(selectedDay, item); closeForms(); }} />
       ) : (
-        <button className="ts-primary-btn" onClick={() => setShowForm(true)}><Plus size={16} /> 予定を追加</button>
+        !editingItem && <button className="ts-primary-btn" onClick={() => setShowForm(true)}><Plus size={16} /></button>
       )}
     </div>
   );
@@ -507,7 +530,7 @@ function ReservationTab({ trip, onAdd, onDelete }) {
 
   return (
     <div>
-      {trip.reservations.length === 0 && <p className="ts-empty-text">まだ予約は登録されていません</p>}
+      {trip.reservations.length === 0 && <p className="ts-empty-text">아직 예약이 등록되지 않았습니다.</p>}
       <div className="ts-reservation-list">
         {trip.reservations.map((r) => (
           <div className="ts-reservation-card" key={r.id}>
@@ -515,7 +538,7 @@ function ReservationTab({ trip, onAdd, onDelete }) {
             <div className="ts-reservation-body">
               <div className="ts-reservation-name">{r.name}</div>
               {r.number && <div className="ts-reservation-number">{r.number}</div>}
-              {r.link && <a className="ts-route-link" href={r.link} target="_blank" rel="noreferrer">リンクを開く <ExternalLink size={11} /></a>}
+              {r.link && <a className="ts-route-link" href={r.link} target="_blank" rel="noreferrer">링크 열기 <ExternalLink size={11} /></a>}
             </div>
             <button className="ts-x-btn" onClick={() => onDelete(r.id)}>×</button>
           </div>
@@ -526,10 +549,10 @@ function ReservationTab({ trip, onAdd, onDelete }) {
         <SelectField value={category} onChange={(e) => setCategory(e.target.value)}>
           {RESERVATION_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
         </SelectField>
-        <InputField placeholder="予約名(例:ANA123便)" value={name} onChange={(e) => setName(e.target.value)} />
-        <InputField placeholder="予約番号(任意)" value={number} onChange={(e) => setNumber(e.target.value)} />
-        <InputField placeholder="リンク(任意)" value={link} onChange={(e) => setLink(e.target.value)} />
-        <button className="ts-primary-btn" onClick={submit}><Plus size={16} /> 予約を追加</button>
+        <InputField placeholder="예약명(예: ANA123편)" value={name} onChange={(e) => setName(e.target.value)} />
+        <InputField placeholder="예약 번호(선택)" value={number} onChange={(e) => setNumber(e.target.value)} />
+        <InputField placeholder="링크(선택)" value={link} onChange={(e) => setLink(e.target.value)} />
+        <button className="ts-primary-btn" onClick={submit}><Plus size={16} /></button>
       </div>
     </div>
   );
@@ -539,20 +562,23 @@ function ReservationTab({ trip, onAdd, onDelete }) {
    旅行詳細ページ
 --------------------------------------------------------- */
 const TABS = [
-  { key: "schedule", label: "日程", icon: CalendarDays },
-  { key: "packing", label: "持ち物", icon: Package },
-  { key: "shopping", label: "買うもの", icon: ShoppingCart },
-  { key: "todo", label: "やること", icon: CheckSquare },
-  { key: "reservation", label: "予約", icon: Ticket },
+  { key: "schedule", label: "일정", icon: CalendarDays },
+  { key: "packing", label: "소지품", icon: Package },
+  { key: "shopping", label: "To Buy", icon: ShoppingCart },
+  { key: "todo", label: "To Do", icon: CheckSquare },
+  { key: "reservation", label: "예약", icon: Ticket },
 ];
 
 function TripDetail({ trip, onBack, onOpenDrawer, updateTrip, onToggleArchive, onDeleteTrip }) {
   const [tab, setTab] = useState("schedule");
   const [todoPhase, setTodoPhase] = useState("pre");
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [shopPhase, setShopPhase] = useState("pre");
 
   const addScheduleItem = (day, item) => {
     updateTrip((t) => ({ ...t, days: { ...t.days, [day]: [...(t.days[day] || []), item] } }));
+  };
+  const updateScheduleItem = (day, id, updated) => {
+    updateTrip((t) => ({ ...t, days: { ...t.days, [day]: t.days[day].map((i) => (i.id === id ? updated : i)) } }));
   };
   const deleteScheduleItem = (day, id) => {
     updateTrip((t) => ({ ...t, days: { ...t.days, [day]: t.days[day].filter((i) => i.id !== id) } }));
@@ -565,7 +591,12 @@ function TripDetail({ trip, onBack, onOpenDrawer, updateTrip, onToggleArchive, o
   });
 
   const packingHandlers = makeChecklistHandlers("packingList");
-  const shoppingHandlers = makeChecklistHandlers("shoppingList");
+
+  const shoppingHandlers = {
+    onAdd: (text) => updateTrip((t) => ({ ...t, shoppingList: { ...t.shoppingList, [shopPhase]: [...t.shoppingList[shopPhase], { id: uid(), text, checked: false }] } })),
+    onToggle: (id) => updateTrip((t) => ({ ...t, shoppingList: { ...t.shoppingList, [shopPhase]: t.shoppingList[shopPhase].map((i) => i.id === id ? { ...i, checked: !i.checked } : i) } })),
+    onDelete: (id) => updateTrip((t) => ({ ...t, shoppingList: { ...t.shoppingList, [shopPhase]: t.shoppingList[shopPhase].filter((i) => i.id !== id) } })),
+  };
 
   const todoHandlers = {
     onAdd: (text) => updateTrip((t) => ({ ...t, todos: { ...t.todos, [todoPhase]: [...t.todos[todoPhase], { id: uid(), text, checked: false }] } })),
@@ -609,32 +640,29 @@ function TripDetail({ trip, onBack, onOpenDrawer, updateTrip, onToggleArchive, o
       </div>
 
       <div className="ts-content">
-        {tab === "schedule" && <ScheduleTab trip={trip} onAddItem={addScheduleItem} onDeleteItem={deleteScheduleItem} />}
-        {tab === "packing" && <ChecklistTab items={trip.packingList} placeholder="持ち物を入力" {...packingHandlers} />}
-        {tab === "shopping" && <ChecklistTab items={trip.shoppingList} placeholder="買うものを入力" {...shoppingHandlers} />}
+        {tab === "schedule" && <ScheduleTab trip={trip} onAddItem={addScheduleItem} onUpdateItem={updateScheduleItem} onDeleteItem={deleteScheduleItem} />}
+        {tab === "packing" && <ChecklistTab items={trip.packingList} placeholder="소지품 입력" deleteLabel="×" {...packingHandlers} />}
+        {tab === "shopping" && (
+          <div>
+            <div className="ts-day-tabs">
+              {[["pre", "여행전"], ["during", "여행중"]].map(([k, label]) => (
+                <button key={k} className={"ts-day-tab" + (shopPhase === k ? " selected" : "")} onClick={() => setShopPhase(k)}>{label}</button>
+              ))}
+            </div>
+            <ChecklistTab items={trip.shoppingList[shopPhase]} placeholder="살 물건 입력" {...shoppingHandlers} />
+          </div>
+        )}
         {tab === "todo" && (
           <div>
             <div className="ts-day-tabs">
-              {[["pre", "旅行前"], ["during", "旅行中"], ["post", "旅行後"]].map(([k, label]) => (
+              {[["pre", "여행전"], ["during", "여행중"], ["post", "여행후"]].map(([k, label]) => (
                 <button key={k} className={"ts-day-tab" + (todoPhase === k ? " selected" : "")} onClick={() => setTodoPhase(k)}>{label}</button>
               ))}
             </div>
-            <ChecklistTab items={trip.todos[todoPhase]} placeholder="やることを入力" {...todoHandlers} />
+            <ChecklistTab items={trip.todos[todoPhase]} placeholder="할 일 입력" {...todoHandlers} />
           </div>
         )}
         {tab === "reservation" && <ReservationTab trip={trip} onAdd={addReservation} onDelete={deleteReservation} />}
-
-        <div className="ts-delete-trip-block">
-          {!confirmDelete ? (
-            <button className="ts-delete-link" onClick={() => setConfirmDelete(true)}>この旅行を削除する</button>
-          ) : (
-            <div className="ts-delete-confirm">
-              <p>本当に削除しますか?元に戻せません</p>
-              <button className="ts-delete-link" onClick={() => onDeleteTrip(trip.id)}>削除する</button>
-              <button className="ts-cancel-link" onClick={() => setConfirmDelete(false)}>やめる</button>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
@@ -712,7 +740,7 @@ export default function App() {
   return (
     <div className="ts-root">
       {saveError && (
-        <div className="ts-save-error-banner">保存できませんでした。通信環境をご確認ください</div>
+        <div className="ts-save-error-banner">저장하지 못했습니다. 통신 상태를 확인해 주세요.</div>
       )}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap');
@@ -742,7 +770,7 @@ export default function App() {
           padding: 14px 16px; position: sticky; top: 0; z-index: 5;
           background: rgba(245,251,253,0.85); backdrop-filter: blur(6px);
         }
-        .ts-topbar-title { font-family:'Zen Maru Gothic'; font-weight:700; font-size:16px; }
+        .ts-topbar-title { font-family:'Zen Maru Gothic'; font-weight:700; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:230px; letter-spacing:0.3px; }
         .ts-icon-btn { background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; }
         .ts-icon-btn-soft { background:#EEF0F2; border:none; border-radius:10px; padding:6px 8px; cursor:pointer; color:var(--navy); display:flex; align-items:center; }
         .ts-content { padding: 4px 16px 24px; }
@@ -767,12 +795,19 @@ export default function App() {
           padding:11px 20px; font-weight:700; font-size:13.5px; cursor:pointer; position:relative;
           box-shadow: 0 4px 10px rgba(0,0,0,0.08); width:100%;
         }
+        .ts-finished-cover { margin: 0 0 12px; padding: 20px 16px 16px; }
+        .ts-finished-cover .ts-countdown-emoji { font-size: 32px; }
+        .ts-finished-cover .ts-countdown-label { font-size: 20px; }
+        .ts-finished-cover .ts-open-btn { margin-top:12px; padding: 9px 16px; }
+        .ts-finished-archive-btn { position:absolute; top:14px; right:14px; z-index:2; background:rgba(255,255,255,0.55); }
 
         .ts-home-empty {
           text-align:center; padding:40px 16px; background: linear-gradient(150deg, #B4E4F6, #FFD5D7);
           border-radius:24px; margin:8px 0 22px;
         }
         .ts-home-empty-title { font-family:'Zen Maru Gothic'; font-weight:700; font-size:17px; margin-top:10px; }
+        .ts-home-empty-icon { display:flex; justify-content:center; align-items:center; }
+        .ts-home-empty-emoji { font-size:34px; }
         .ts-home-empty-sub { font-size:13px; color:var(--navy); opacity:0.75; margin:6px 0 16px; }
 
         .ts-primary-btn {
@@ -831,9 +866,7 @@ export default function App() {
           border-radius:24px 24px 0 0; padding:18px 18px 26px; max-height:85vh; overflow-y:auto; }
         .ts-sheet-handle { width:40px; height:4px; background:#E4E9ED; border-radius:99px; margin:0 auto 14px; }
         .ts-sheet-title { font-family:'Zen Maru Gothic'; font-weight:700; margin:0 0 14px; }
-        .ts-emoji-picker { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
-        .ts-emoji-btn { font-size:20px; background:#F5FBFD; border:1.5px solid #E4E9ED; border-radius:12px; width:44px; height:44px; cursor:pointer; }
-        .ts-emoji-btn.selected { background: linear-gradient(135deg, #FFC2C4, #FFD5D7); border-color: transparent; }
+        .ts-flag-select { font-size:22px; text-align:center; }
 
         .ts-drawer { width:82%; max-width:340px; background:#fff; height:100%; padding:18px 16px; overflow-y:auto; }
         .ts-drawer-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
@@ -871,6 +904,7 @@ export default function App() {
         .ts-schedule-reservation { font-size:11px; display:flex; align-items:center; gap:4px; color:var(--navy); opacity:0.75; }
         .ts-schedule-memo { font-size:11.5px; color:var(--gray); }
         .ts-x-btn { position:absolute; top:8px; right:8px; background:none; border:none; color:var(--gray); font-size:16px; cursor:pointer; opacity:0.6; }
+        .ts-edit-btn { position:absolute; top:9px; right:32px; background:none; border:none; color:var(--sky-deep); cursor:pointer; opacity:0.6; display:flex; align-items:center; padding:2px; }
 
         .ts-inline-form { background:#fff; border-radius:16px; padding:14px; margin-top:10px; box-shadow: 0 3px 10px rgba(63,169,224,0.07); }
         .ts-form-btn-row { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:6px; }
@@ -899,6 +933,10 @@ export default function App() {
         .ts-delete-trip-block { text-align:center; margin-top:30px; }
         .ts-delete-confirm { display:flex; flex-direction:column; align-items:center; gap:8px; }
         .ts-delete-confirm p { font-size:12.5px; color:var(--navy); opacity:0.8; margin:0; }
+        .ts-countdown-delete { margin-top:14px; position:relative; }
+        .ts-countdown-delete-link { color:#fff; text-decoration:underline; opacity:0.85; }
+        .ts-countdown-cancel-link { color:#fff; opacity:0.85; }
+        .ts-countdown-delete-confirm-text { color:#fff !important; opacity:0.9 !important; }
         .ts-loading-block { text-align:center; padding:80px 20px; color: var(--navy); display:flex; flex-direction:column; align-items:center; gap:10px; }
         .ts-loading-block p { font-size:13px; margin:0; }
       `}</style>
@@ -906,7 +944,7 @@ export default function App() {
       {loading ? (
         <div className="ts-loading-block">
           <Sparkles size={28} color="#3FA9E0" />
-          <p>読み込み中です…</p>
+          <p>불러오는 중입니다…</p>
         </div>
       ) : activeTrip ? (
         <TripDetail
@@ -923,6 +961,7 @@ export default function App() {
           onOpenTrip={openTrip}
           onOpenDrawer={() => setDrawerOpen(true)}
           onAddTrip={() => { setDrawerOpen(true); setShowAddSheet(true); }}
+          onDeleteTrip={deleteTrip}
         />
       )}
 
